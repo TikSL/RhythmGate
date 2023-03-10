@@ -6,7 +6,7 @@ Projet en binôme d'électronique numérique - ESEO semestre 6
 
 ### 🔎 Présentation
 Le but de ce projet est de fabriquer une serrure se déverouillant à l'aide d'une combinaison sonore.
-L'utilisateur frappe à la porte la combinaison et la serrure se déverouille en fonction.
+L'utilisateur toque à la porte la combinaison et la serrure se déverouille en fonction.
 
 ### 💡Options ou idées à explorer : 
   - Il est possible d'enregistrer et de changer la séquence de déverouillage.  
