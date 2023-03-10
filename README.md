@@ -1,8 +1,11 @@
 # RhythmGate
-*\*Knock Knock\* Who's Here ?*  
+
+*\* Knock Knock \* Who's Here ?*  
 🔑🔒🎵🔉
 
 Projet en binôme d'électronique numérique - ESEO semestre 6
+
+---
 
 ### 🔎 Présentation
 Le but de ce projet est de fabriquer une serrure se déverouillant à l'aide d'une combinaison sonore.
@@ -19,6 +22,3 @@ L'utilisateur toque à la porte la combinaison et la serrure se déverouille en 
   - Jouer la séquence lors de l'enregistrement d'une nouvelle
   - Malus/blocage si combinaison piège
   - Temps limite ? Séquence de 5 sec max ?
-  
-  
-
