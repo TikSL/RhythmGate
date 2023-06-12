@@ -34,6 +34,9 @@
 	#define BUTTON_JOUEUR_GPIO	GPIOA
 	#define BUTTON_JOUEUR_PIN	GPIO_PIN_11
 
+	#define MICROPHONE_GPIO		GPIOA
+	#define MICROPHONE_PIN		GPIO_PIN_0
+
 	#if BLUEPILL
 		#error "Vous ne pouvez pas définir à la fois NUCLEO et BLUEPILL !"
 	#endif
@@ -72,7 +75,7 @@
 #define USE_BSP_TIMER			1 //Utilisation de stm32f1_timer.c/h
 
 
-#define USE_ADC					0
+#define USE_ADC					1
 	//Ces configurations permettent d'activer les entrées analogiques souhaitées.
 	//16 entrées analogiques peuvent être activées maximum.
 	//2 entrées analogiques doivent être activées minimum. (Vref est un choix possible si vous utilisez une seule entrée)
@@ -147,7 +150,7 @@
 #define USE_BMP180				0 //Capteur de pression
 #define USE_MOTOR_DC			0
 #define USE_STEPPER_MOTOR		0
-#define USE_RTC					0
+#define USE_RTC					1
 #define USE_PWM					0
 #define USE_ESP8266				0 //Module Wifi
 #define USE_NFC03A1				0

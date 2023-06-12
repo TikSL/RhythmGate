@@ -13,20 +13,23 @@
 #include "stm32f1_gpio.h"
 #include "macro_types.h"
 #include "systick.h"
-#include "../lib/bsp/MatrixLed/WS2812S.h"
+#include "WS2812S.h"
+#include "stm32f1_adc.h"
+
 #include "button.h"
 #include "traces.h"
 #include "led.h"
+#include "servo.h"
 
 
 static void state_machine(void);
 
-//static volatile uint32_t t = 0;
-//void process_ms(void)
-//{
-//	if(t)
-//		t--;
-//}
+static volatile uint32_t t = 0;
+void process_ms(void)
+{
+	if(t)
+		t--;
+}
 
 int main(void)
 {
@@ -51,13 +54,29 @@ int main(void)
 	//On ajoute la fonction process_ms à la liste des fonctions appelées automatiquement chaque ms par la routine d'interruption du périphérique SYSTICK
 	//	Systick_add_callback_function(&process_ms);
 
+	//Initialisation des composants
 	LED_init();
-
 	BUTTON_init();
+//	SERVO_init();
+	ADC_init();
+	MICRO_init();
+
+	printf("\n");
+	printf("#--------------------------#\n");
+	printf("|      INITIALISATION      |\n");
+	printf("|        COMPLETEE         |\n");
+	printf("#--------------------------#\n");
+
+//	Systick_add_callback_function(process_1ms);
+
+
 
 	while(1)
 	{
-		state_machine();
+//		Micro_detection_test();
+//		state_machine();
+//		DEMO_adc_statemachine();
+		MICRO_joueur_state_machine();
 	}
 }
 
@@ -94,6 +113,7 @@ static void state_machine(void){
 				break;
 
 			case MODE_DEVEROUILLE:
+
 				LED_set(LED_ON, Color[2]); //LED blanche full
 				if (button_organi_event == BUTTON_EVENT_LONG_PRESS){
 					print_traces("[MODE	] MODE DEVEROUILLE -> MODE ENREGISTREMENT\n");
