@@ -38,7 +38,7 @@ void SERVO_init(void){
 void SERVO_ouvrir(void){
 	SERVO_set_position(SERVO_OUVERT);
 	print_traces("[SERVO] Ouverture\n");
-	printf
+
 }
 
 void SERVO_fermer(void){

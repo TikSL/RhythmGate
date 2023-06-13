@@ -73,7 +73,7 @@ micro_event_joueur_e MICRO_joueur_state_machine(void){
 
 	static state_micro_e state = INIT;
 	int16_t mesure_son;
-	ret = VEROUILLE;
+	micro_event_joueur_e ret = VEROUILLE;
 
 	if (initialized_micro){
 

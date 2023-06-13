@@ -20,9 +20,12 @@
 #include "traces.h"
 #include "led.h"
 #include "servo.h"
+#include "micro.h"
 
 
 static void state_machine(void);
+
+
 
 static volatile uint32_t t = 0;
 static volatile uint32_t t_ecoute = 0;
@@ -67,7 +70,7 @@ int main(void)
 	BSP_GPIO_PinCfg(BLUE_BUTTON_GPIO, BLUE_BUTTON_PIN, GPIO_MODE_INPUT,GPIO_PULLUP,GPIO_SPEED_FREQ_HIGH);
 
 	//On ajoute la fonction process_ms à la liste des fonctions appelées automatiquement chaque ms par la routine d'interruption du périphérique SYSTICK
-	//	Systick_add_callback_function(&process_ms);
+	Systick_add_callback_function(&process_ms);
 
 	//Initialisation des composants
 	LED_init();
@@ -91,7 +94,7 @@ int main(void)
 //		Micro_detection_test();
 		state_machine();
 //		DEMO_adc_statemachine();
-//		MICRO_joueur_state_machine();
+		MICRO_joueur_state_machine();
 	}
 	return 0;
 }
@@ -110,13 +113,15 @@ static void state_machine(void){
 			MODE_DEVEROUILLE,
 			MODE_ENREGISTREMENT,
 			MODE_JOUE_SEQUENCE,
-			MODE_ECOUTE
+			MODE_ECOUTE,
+			MODE_ENTREE_ECOUTE,
 		}state_e;
 
 		static state_e mode_state = INIT;
 //		static state_e previous_state = INIT;
-		bool_e entrance = (mode_state!=previous_state)?TRUE:FALSE;	//ce booléen sera vrai seulement 1 fois après chaque changement d'état.
-		previous_state = mode_state;									//previous_state mémorise l'état actuel (qui est le futur état précédent)
+//
+//		bool_e entrance = (mode_state!=previous_state)?TRUE:FALSE;	//ce booléen sera vrai seulement 1 fois après chaque changement d'état.
+//		previous_state = mode_state;									//previous_state mémorise l'état actuel (qui est le futur état précédent)
 
 		// Detection bouton organisateur
 		button_event_organi_e button_organi_event = BUTTON_organi_state_machine();
@@ -124,6 +129,7 @@ static void state_machine(void){
 		// Detection bouton joueur
 		button_event_joueur_e button_joueur_event = BUTTON_joueur_state_machine();
 
+		micro_event_joueur_e resultat_ecoute = MICRO_joueur_state_machine();
 
 
 		switch(mode_state)
@@ -158,7 +164,6 @@ static void state_machine(void){
 				break;
 
 			case MODE_ENREGISTREMENT:
-
 				LED_set(LED_ON, Color[3]); //LED verte full 5s
 				MICRO_enregistrement_sequence();
 				print_traces("[MODE	] MODE ENREGISTREMENT -> MODE JOUE_SEQUENCE\n");
@@ -175,31 +180,37 @@ static void state_machine(void){
 			case MODE_VEROUILLE:
 				LED_set(LED_ON, Color[1]); //LED rouge full
 				if (button_joueur_event == BUTTON_JOUEUR_EVENT_PRESS){
-					print_traces("[MODE	] MODE VEROUILLE -> MODE ECOUTE\n");
-					mode_state = MODE_ECOUTE;
+					print_traces("[MODE	] MODE VEROUILLE -> MODE ENTREE_ECOUTE\n");
+					mode_state = MODE_ENTREE_ECOUTE;
 				}
 				if (button_organi_event == BUTTON_EVENT_LONG_PRESS){
 					print_traces("[MODE	] MODE VEROUILLE -> MODE DEVEROUILLE\n");
 					mode_state = MODE_DEVEROUILLE;
 				}
 				break;
+
+			case MODE_ENTREE_ECOUTE:
+				LED_set(LED_BLINK, Color[5]); //LED rose full 5s
+				t_ecoute = 5000;
+				mode_state = MODE_ECOUTE;
+				print_traces("[MODE	] MODE ENTREE_ECOUTE -> MODE ECOUTE\n");
+				break;
 			case MODE_ECOUTE:
-				if (entrance){
-					LED_set(LED_BLINK, Color[5]); //LED rose full 5s
-					t_ecoute = 5000;
-				}
-				micro_event_joueur_e resultat_ecoute = MICRO_joueur_state_machine();
+//				micro_event_joueur_e resultat_ecoute = MICRO_joueur_state_machine();
 				if (!t_ecoute){
 					if (resultat_ecoute == DEVEROUILLE){
 					print_traces("[MODE	] MODE ECOUTE -> MODE DEVEROUILLE\n");
 					SERVO_ouvrir();
 					mode_state = MODE_DEVEROUILLE;
+
 					}
 					else{
+						print_traces("[MODE	] MODE ECOUTE -> MODE ECOUTE\n");
 						mode_state = MODE_ECOUTE;
 					}
 				}
 				else{
+					print_traces("[MODE	] MODE ECOUTE -> MODE VEROUILLE\n");
 					mode_state = MODE_VEROUILLE;
 				}
 			default:
