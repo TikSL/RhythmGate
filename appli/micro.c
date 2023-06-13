@@ -35,14 +35,10 @@ static int password[TAILLE_TABLEAUX] = {3720, 4180, 4940, 5730, 6180, 6930, 8620
 //static int password[TAILLE_TABLEAUX] = {0, 1000, 2000, 3000, 4000, 5000} // 1 coup / s
 
 
-static void process_ms_micro(void);
-
-void MICRO_init(void)
-{
-	Systick_add_callback_function(&process_ms_micro);
-	initialized_micro = TRUE;
-}
-
+/**
+ * \fn void process_ms_micro (void)
+ * \brief Fonction gérant l'incrément ou décrément temporel
+ */
 static void process_ms_micro(void)
 {
 	if(t)
@@ -52,6 +48,14 @@ static void process_ms_micro(void)
 	absolute_time++;
 
 }
+
+
+void MICRO_init(void)
+{
+	Systick_add_callback_function(&process_ms_micro);
+	initialized_micro = TRUE;
+}
+
 
 micro_event_joueur_e MICRO_joueur_state_machine(void){
 

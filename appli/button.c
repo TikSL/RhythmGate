@@ -27,6 +27,7 @@ static bool_e initialized_player = FALSE;
 static bool_e initialized_game_master = FALSE;
 static uint32_t click_counter = 0;
 
+
 void BUTTON_init(void)
 {
 	BSP_GPIO_PinCfg(BUTTON_ORGANI_GPIO, BUTTON_ORGANI_PIN, GPIO_MODE_INPUT,GPIO_PULLUP,GPIO_SPEED_FREQ_HIGH);

@@ -26,6 +26,11 @@ static void state_machine(void);
 
 static volatile uint32_t t = 0;
 static volatile uint32_t t_ecoute = 0;
+
+/**
+ * \fn void process_ms(void)
+ * \brief Fonction gérant l'incrément ou décrément temporel
+ */
 void process_ms(void)
 {
 	if(t)
@@ -34,6 +39,13 @@ void process_ms(void)
 		t_ecoute--;
 }
 
+
+/**
+ * \fn int main (void)
+ * \brief Entrée du programme.
+ *
+ * \return 0 - Arrêt normal du programme.
+ */
 int main(void)
 {
 	//Initialisation de la couche logicielle HAL (Hardware Abstraction Layer)
@@ -81,9 +93,15 @@ int main(void)
 //		DEMO_adc_statemachine();
 //		MICRO_joueur_state_machine();
 	}
+	return 0;
 }
 
 
+
+/**
+ * \fn static state_machine (void)
+ * \brief Machine d'état principale du projet
+ */
 static void state_machine(void){
 	typedef enum
 		{

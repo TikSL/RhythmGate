@@ -10,6 +10,7 @@
 #include "stm32f1_timer.h"
 #include "stm32f1_gpio.h"
 #include "macro_types.h"
+#include "traces.h"
 
 #define PERIOD_TIMER 10 //ms
 
@@ -18,6 +19,13 @@ static const uint16_t SERVO_FERME = 50; // ATTENTION A LA VALEUR
 
 static uint16_t current_position;
 
+/**
+ * \fn SERVO_init (void)
+ * \brief Fonction d'initialisation pour le servomoteur
+ *
+ * \param void
+ * \return void
+ */
 void SERVO_init(void){
 	//initialisation et lancement du timer1 à une période de 10 ms
 	TIMER_run_us(TIMER1_ID, PERIOD_TIMER*1000, FALSE); //10000us = 10ms
@@ -29,10 +37,13 @@ void SERVO_init(void){
 
 void SERVO_ouvrir(void){
 	SERVO_set_position(SERVO_OUVERT);
+	print_traces("[SERVO] Ouverture\n");
+	printf
 }
 
 void SERVO_fermer(void){
 	SERVO_set_position(SERVO_FERME);
+	print_traces("[SERVO] Fermeture\n");
 }
 
 void SERVO_set_position(uint16_t position){

@@ -11,10 +11,11 @@
 #include "traces.h"
 #include <stdio.h>
 
+#define TRACES 1 // Mettre à 1 pour activer les traces
 
 void print_traces(char * texte){
 
-#if TRACES == 1
+#if TRACES
 	printf(texte);
 #endif
 	return 0;
