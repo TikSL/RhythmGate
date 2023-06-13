@@ -25,10 +25,13 @@
 static void state_machine(void);
 
 static volatile uint32_t t = 0;
+static volatile uint32_t t_ecoute = 0;
 void process_ms(void)
 {
 	if(t)
 		t--;
+	if(t_ecoute)
+		t_ecoute--;
 }
 
 int main(void)
@@ -94,8 +97,8 @@ static void state_machine(void){
 
 		static state_e mode_state = INIT;
 //		static state_e previous_state = INIT;
-		//bool_e entrance = (mode_state!=previous_state)?TRUE:FALSE;	//ce booléen sera vrai seulement 1 fois après chaque changement d'état.
-		//previous_state = mode_state;									//previous_state mémorise l'état actuel (qui est le futur état précédent)
+		bool_e entrance = (mode_state!=previous_state)?TRUE:FALSE;	//ce booléen sera vrai seulement 1 fois après chaque changement d'état.
+		previous_state = mode_state;									//previous_state mémorise l'état actuel (qui est le futur état précédent)
 
 		// Detection bouton organisateur
 		button_event_organi_e button_organi_event = BUTTON_organi_state_machine();
@@ -136,7 +139,7 @@ static void state_machine(void){
 			case MODE_ENREGISTREMENT:
 
 				LED_set(LED_ON, Color[3]); //LED verte full 5s
-				HAL_Delay(5000);
+				MICRO_enregistrement_sequence();
 				print_traces("[MODE	] MODE ENREGISTREMENT -> MODE JOUE_SEQUENCE\n");
 				mode_state = MODE_JOUE_SEQUENCE;
 				break;
@@ -160,10 +163,23 @@ static void state_machine(void){
 				}
 				break;
 			case MODE_ECOUTE:
-				LED_set(LED_BLINK, Color[5]); //LED rose full 5s
-				HAL_Delay(5000);
-				print_traces("[MODE	] MODE ECOUTE -> MODE VEROUILLE\n");
-				mode_state = MODE_VEROUILLE;
+				if (entrance){
+					LED_set(LED_BLINK, Color[5]); //LED rose full 5s
+					t_ecoute = 5000;
+				}
+				micro_event_joueur_e resultat_ecoute = MICRO_joueur_state_machine();
+				if (!t_ecoute){
+					if (resultat_ecoute == DEVEROUILLE){
+					print_traces("[MODE	] MODE ECOUTE -> MODE DEVEROUILLE\n");
+					mode_state = MODE_DEVEROUILLE;
+					}
+					else{
+						mode_state = MODE_ECOUTE;
+					}
+				}
+				else{
+					mode_state = MODE_VEROUILLE;
+				}
 			default:
 				break;
 		}

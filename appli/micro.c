@@ -17,17 +17,20 @@
 
 #define BLIND_DURATION 100
 #define VALEUR_SEUIL_DETECTION 2300
-#define COEF_ERREUR 3
+#define COEF_ERREUR 5
+#define TAILLE_TABLEAUX 10
 
 static bool_e initialized_micro = FALSE;
 static volatile uint32_t t_blind = 0;
 static volatile uint16_t t = 0;
 static volatile int absolute_time = 0;
+static volatile uint16_t t_enregistrement = 0;
 uint32_t compteur = 0;
 uint32_t index = 0;
 static uint32_t nbr_toc = 7;
 static int player_try[10];
-static int password[10] = {3720, 4180, 4940, 5730, 6180, 6930, 8620, 0, 0, 0}; // Mario
+static int password[TAILLE_TABLEAUX] = {3720, 4180, 4940, 5730, 6180, 6930, 8620, 0, 0, 0}; // Mario
+//static int password[TAILLE_TABLEAUX] = {0, 1000, 2000, 3000, 4000, 5000} // 1 coup / s
 
 
 static void process_ms_micro(void);
@@ -42,10 +45,13 @@ static void process_ms_micro(void)
 {
 	if(t)
 		t--;
+	if (t_enregistrement)
+		t_enregistrement--;
 	absolute_time++;
+
 }
 
-void MICRO_joueur_state_machine(void){
+micro_event_joueur_e MICRO_joueur_state_machine(void){
 
 	typedef enum{
 		INIT = 0,
@@ -61,6 +67,7 @@ void MICRO_joueur_state_machine(void){
 
 	static state_micro_e state = INIT;
 	int16_t mesure_son;
+	ret = VEROUILLE;
 
 	if (initialized_micro){
 
@@ -122,19 +129,48 @@ void MICRO_joueur_state_machine(void){
 			}
 			absolute_time = 0;
 			state = RESET_INDEX;
-//			state = CODE_OK;
+			state = CODE_OK;
 
 
 			break;
 		case CODE_OK:
 			printf("C'EST GAGNE !!!\n ");
-			state = INIT;
+			ret = DEVEROUILLE;
 			break;
 		case WAIT_PERIOD:
 			break;
 
 		}
+		return ret;
 	}
+}
+
+void MICRO_enregistrement_sequence(void){
+	for(int k=0; k < TAILLE_TABLEAUX; k++){
+		password[k] = 0;
+	}
+	int index = 0;
+	absolute_time = 0;
+	t_enregistrement = 5000;
+	while (index < TAILLE_TABLEAUX || t_enregistrement){
+		if (!t){
+			t= 20;
+			int16_t mesure_son = ADC_getValue(0);
+			if(mesure_son > VALEUR_SEUIL_DETECTION)
+			{
+				t = BLIND_DURATION;
+				password[index] = absolute_time;
+			}
+		}
+
+	printf("[MICRO] Enregistrement séquence : ");
+	for(int k=0; k < TAILLE_TABLEAUX; k++){
+			printf("%d", password[k]);
+		}
+
+	printf("\n");
+	}
+
 }
 
 

@@ -11,11 +11,13 @@
 
 typedef enum
 {
-	INIT,
+	VEROUILLE,
+	DEVEROUILLE,
 
 }micro_event_joueur_e;
 
-void MICRO_joueur_state_machine(void);
+micro_event_joueur_e MICRO_joueur_state_machine(void);
+void MICRO_enregistrement_sequence(void)
 
 void Micro_detection_test(void);
 
