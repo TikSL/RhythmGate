@@ -13,6 +13,9 @@
 
 #define PERIOD_TIMER 10 //ms
 
+static const uint16_t SERVO_OUVERT = 50; // ATTENTION A LA VALEUR
+static const uint16_t SERVO_FERME = 50; // ATTENTION A LA VALEUR
+
 static uint16_t current_position;
 
 void SERVO_init(void){
@@ -24,6 +27,13 @@ void SERVO_init(void){
 	SERVO_set_position(50);
 }
 
+void SERVO_ouvrir(void){
+	SERVO_set_position(SERVO_OUVERT);
+}
+
+void SERVO_fermer(void){
+	SERVO_set_position(SERVO_FERME);
+}
 
 void SERVO_set_position(uint16_t position){
 	if(position > 100){

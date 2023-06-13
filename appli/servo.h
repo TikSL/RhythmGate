@@ -10,8 +10,7 @@
 
 void SERVO_init(void);
 
-void SERVO_set_position(uint16_t position);
-
-uint16_t SERVO_get_position(void);
+void SERVO_ouvrir(void);
+void SERVO_fermer(void);
 
 #endif /* SERVO_H_ */

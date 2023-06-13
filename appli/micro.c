@@ -15,6 +15,8 @@
 #include "micro.h"
 #include "stm32f1_adc.h" // Module pour ADC0 lecture du micro
 
+#define MODE_PASSWORD 0 // 0 pour password déjà enregistré, 1 pour pouvoir l'enregistrer
+
 #define BLIND_DURATION 100
 #define VALEUR_SEUIL_DETECTION 2300
 #define COEF_ERREUR 5
@@ -83,6 +85,7 @@ micro_event_joueur_e MICRO_joueur_state_machine(void){
 			for(int k=0; k < nbr_toc; k++){
 				player_try[k] = 0;
 			}
+			absolute_time = 0;
 			state = WAIT_PULSE;
 			break;
 		case WAIT_PULSE:
@@ -123,29 +126,26 @@ micro_event_joueur_e MICRO_joueur_state_machine(void){
 
 				if (erreur_k > COEF_ERREUR){
 					printf("[MICRO] Evaluation mesure n° %d NOK\n", k);
-					state = RESET_INDEX;
+					t = 3000;
+					state = INIT;
 					break;
 				}
 			}
 			absolute_time = 0;
-			state = RESET_INDEX;
 			state = CODE_OK;
-
 
 			break;
 		case CODE_OK:
 			printf("C'EST GAGNE !!!\n ");
 			ret = DEVEROUILLE;
 			break;
-		case WAIT_PERIOD:
-			break;
-
 		}
 		return ret;
 	}
 }
 
 void MICRO_enregistrement_sequence(void){
+#if MODE_PASSWORD
 	for(int k=0; k < TAILLE_TABLEAUX; k++){
 		password[k] = 0;
 	}
@@ -170,7 +170,7 @@ void MICRO_enregistrement_sequence(void){
 
 	printf("\n");
 	}
-
+#endif
 }
 
 

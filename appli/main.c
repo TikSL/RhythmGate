@@ -60,7 +60,7 @@ int main(void)
 	//Initialisation des composants
 	LED_init();
 	BUTTON_init();
-//	SERVO_init();
+	SERVO_init();
 	ADC_init();
 	MICRO_init();
 
@@ -77,9 +77,9 @@ int main(void)
 	while(1)
 	{
 //		Micro_detection_test();
-//		state_machine();
+		state_machine();
 //		DEMO_adc_statemachine();
-		MICRO_joueur_state_machine();
+//		MICRO_joueur_state_machine();
 	}
 }
 
@@ -113,9 +113,11 @@ static void state_machine(void){
 			case INIT:
 				print_traces("[MODE	] MODE INIT -> MODE DEVEROUILLE\n");
 				mode_state = MODE_DEVEROUILLE;
+				SERVO_ouvrir();
 				break;
 
 			case MODE_DEVEROUILLE:
+
 
 				LED_set(LED_ON, Color[2]); //LED blanche full
 				if (button_organi_event == BUTTON_EVENT_LONG_PRESS){
@@ -132,6 +134,7 @@ static void state_machine(void){
 					print_traces("[MODE	] MODE DEVEROUILLE -> MODE VEROUILLE\n");
 					LED_set(LED_BLINK, Color[1]); //LED rouge clignote 5s
 					HAL_Delay(5000);
+					SERVO_fermer();
 					mode_state = MODE_VEROUILLE;
 				}
 				break;
@@ -171,6 +174,7 @@ static void state_machine(void){
 				if (!t_ecoute){
 					if (resultat_ecoute == DEVEROUILLE){
 					print_traces("[MODE	] MODE ECOUTE -> MODE DEVEROUILLE\n");
+					SERVO_ouvrir();
 					mode_state = MODE_DEVEROUILLE;
 					}
 					else{
